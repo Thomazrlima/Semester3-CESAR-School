@@ -14,8 +14,10 @@ public class q3 {
 			System.out.println(y%2);
 		}else if (x == 2) {
 			System.out.println(Math.PI + y);
+		}else if (x == 3) {
+			System.out.println(1.0/y);
 		}else {
-			System.out.println(1/y);
+			System.out.println("Opção inválida");
 		}
 
 	}
