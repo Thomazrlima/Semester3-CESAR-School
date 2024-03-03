@@ -12,10 +12,15 @@ public class JavaEstruturado1 {
         if(x > 16){
             System.out.println("OVERFLOW");
         }
-        else if(x >= 0) {
-            for(int i = (x-1); i > 1; i--){
+        else if(x == 1 || x == 0){
+            System.out.println(1);
+        }
+        else if(x >= 2) {
+            for(int i = (x-1); i >= 1; i--){
                 x = x*i;
-                System.out.println(x);
+                if(i == 1) {
+                    System.out.println(x);
+                }
 
             }
         }else {
