@@ -11,6 +11,18 @@ void adicionar(Node **head, int a);
 void impar(Node *head);
 void ultimo(Node *head);
 
+int main(void) {
+    Node *head = NULL;
+    int escolha;
+
+    do {
+        escolha = Menu();
+        Caminho(escolha, &head);
+    } while (1);
+
+    return 0;
+}
+
 void adicionar(Node **head, int a){
   Node *novo = (Node *)malloc(sizeof(Node));
   if(novo!= NULL){
@@ -38,18 +50,6 @@ void ultimo(Node *head){
 
 int Menu(void);
 void Caminho(int escolha, Node **head);
-
-int main(void) {
-    Node *head = NULL;
-    int escolha;
-
-    do {
-        escolha = Menu();
-        Caminho(escolha, &head);
-    } while (1);
-
-    return 0;
-}
 
 int Menu(void) {
     int escolha;
