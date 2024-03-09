@@ -23,12 +23,13 @@ public class MainVenda {
         int quantidade = entrada.nextInt();
         entrada.nextLine();
 
-        System.out.println("Imposto?:");
+        System.out.println("Isento?:");
         boolean isento = entrada.nextBoolean();
         entrada.nextLine();
 
         System.out.println("Informe a alíquota do imposto:");
         double aliquota = entrada.nextDouble();
+        entrada.nextLine();
 
         System.out.println("Forma de pagamento:");
         FormaPagamento forma = FormaPagamento.valueOf(entrada.nextLine());
