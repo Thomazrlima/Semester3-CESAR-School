@@ -34,7 +34,7 @@ int main(void) {
 
         int diamantes = contfila(head);
         printf("%d\n", diamantes);
-        liberarLista(head);
+        liberarfila(head);
         head = NULL;
     }
 
