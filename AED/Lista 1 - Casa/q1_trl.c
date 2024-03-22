@@ -7,14 +7,13 @@ typedef struct Node {
     struct Node *prox;
 } Node;
 
-void inserir(Node **head, Node **tail, int n);
-int contfila(Node *head);
-void liberarfila(Node *head);
+void inserir(Node **head, int n);
+int contpilha(Node *head);
+void liberarpilha(Node *head);
 
 int main(void) {
     int N;
     Node *head = NULL;
-    Node *tail = NULL;
     scanf("%d", &N);
 
     while (N--) {
@@ -27,38 +26,30 @@ int main(void) {
             if (gnd[i] == '<') {
                 abre++;
             } else if (gnd[i] == '>' && abre > 0) {
-                inserir(&head, &tail, i);
+                inserir(&head, i);
                 abre--;
             }
         }
 
-        int diamantes = contfila(head);
+        int diamantes = contpilha(head);
         printf("%d\n", diamantes);
-        liberarLista(head);
+        liberarpilha(head);
         head = NULL;
     }
 
     return 0;
 }
 
-void inserir(Node **head, Node **tail, int n) {
-    Node *novo = (Node *)malloc(sizeof(Node));
-
-    if (novo != NULL) {
-        novo->diamante = n;
-        novo->prox = NULL;
-
-        if (*head == NULL) {
-            *head = novo;
-            *tail = novo;
-        } else {
-            (*tail)->prox = novo;
-            *tail = novo;
-        }
-    }
+void inserir(Node **head, int diamante){
+  Node *novo = (Node *)malloc(sizeof(Node));
+  if(novo!= NULL){
+    novo->diamante = diamante;
+    novo->prox = *head;
+    *head =novo;
+  }
 }
 
-int contfila(Node *head) {
+int contpilha(Node *head) {
     int cont = 0;
     Node *aux = head;
     while (aux != NULL) {
@@ -68,7 +59,7 @@ int contfila(Node *head) {
     return cont;
 }
 
-void liberarfila(Node *head) {
+void liberarpilha(Node *head) {
     while (head != NULL) {
         Node *temp = head;
         head = head->prox;
