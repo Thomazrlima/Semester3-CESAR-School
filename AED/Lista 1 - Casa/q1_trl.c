@@ -33,7 +33,11 @@ int main(void) {
 
         int diamantes = contpilha(head);
         printf("%d\n", diamantes);
+<<<<<<< HEAD
         liberarpilha(head);
+=======
+        liberarfila(head);
+>>>>>>> 80cfe60cfedecff7f2929866a68026beafa5d1e6
         head = NULL;
     }
 
