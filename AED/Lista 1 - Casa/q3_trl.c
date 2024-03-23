@@ -3,104 +3,136 @@
 #include <stdlib.h>
 
 typedef struct Node {
-    char nome[20];
-    struct Node *prox;
-    struct Node *ant;
+  char nome[20];
+  struct Node *prox;
+  struct Node *ant;
 } Node;
 
 void add(Node **head, char *nome);
-void imprimir(Node *head);
+void imprimir(Node **head);
 Node* separar(Node **head);
+int contador(Node *head);
 
 int main(void) {
-    int N;
-    Node *padrao = NULL;
+  int N;
+  Node *padrao = NULL;
 
-    scanf("%d", &N);
-    for (int i = 0; i < N; i++) {
-        char nome[20];
-        scanf("%s", nome);
-        add(&padrao, nome);
-    }
+  scanf("%d", &N);
+  for (int i = 0; i < N; i++) {
+    char nome[20];
+    scanf("%s", nome);
+    add(&padrao, nome);
+  }
 
-    imprimir(padrao);
-    Node *linha2 = separar(&padrao);
-    imprimir(linha2);
+  Node *corte = separar(&padrao);
+  imprimir(&padrao);
+
+  int num = contador(padrao);
+  Node **linha = (Node **)malloc(num * sizeof(Node *));
+  linha[0] = corte;
+
+  for (int i = 1; i < num; i++) {
+    linha[i] = separar(&linha[i - 1]);
+  }
+
+  for (int i = 0; i < num; i++) {
+    printf("\n");
+    imprimir(&linha[i]);
     
+    Node *temp = linha[i];
+    
+    while (temp != NULL) {
+      Node *next = temp->prox;
+      free(temp);
+      temp = next;
+    }
+  }
+  free(linha);
 
-    return 0;
+  return 0;
 }
 
 void add(Node **head, char *nome) {
-    Node *novo = (Node *)malloc(sizeof(Node));
-    strcpy(novo->nome, nome);
-    novo->prox = NULL;
-    novo->ant = NULL;
+  Node *novo = (Node *)malloc(sizeof(Node));
+  strcpy(novo->nome, nome);
+  novo->prox = NULL;
+  novo->ant = NULL;
 
-    if (*head == NULL) {
-        *head = novo;
+  if (*head == NULL) {
+    *head = novo;
+  } else {
+    Node *aux = *head;
+    Node *ant = NULL;
+
+    while (aux != NULL && strlen(aux->nome) <= strlen(novo->nome)) {
+      ant = aux;
+      aux = aux->prox;
+     }
+
+    if (ant == NULL) {
+      novo->prox = *head;
+      (*head)->ant = novo;
+      *head = novo;
     } else {
-        Node *aux = *head;
-        Node *ant = NULL;
-
-        while (aux != NULL && strlen(aux->nome) <= strlen(novo->nome)) {
-            ant = aux;
-            aux = aux->prox;
-        }
-
-        if (ant == NULL) {
-            novo->prox = *head;
-            (*head)->ant = novo;
-            *head = novo;
-        } else {
-            ant->prox = novo;
-            novo->ant = ant;
-            novo->prox = aux;
-            if (aux != NULL) {
-              aux->ant = novo;
-            }
-        }
+      ant->prox = novo;
+      novo->ant = ant;
+      novo->prox = aux;
+      if (aux != NULL) {
+        aux->ant = novo;
+      }
     }
+  }
 }
 
-void imprimir(Node *head) {
-    while (head != NULL) {
-        printf("%s", head->nome);
-        if (head->prox != NULL) {
-            printf(", ");
-        }
-        head = head->prox;
+void imprimir(Node **head) {
+  Node *current = *head;
+  while (current != NULL) {
+    printf("%s", current->nome);
+    if (current->prox != NULL) {
+      printf(", ");
     }
+    current = current->prox;
+  }
 }
 
 Node* separar(Node **head) {
-    Node *novalista = NULL;
-    Node *curr = *head;
+  Node *novalista = NULL;
+  Node *aux = *head;
 
-    while (curr != NULL && curr->prox != NULL) {
-        if (strlen(curr->nome) == strlen(curr->prox->nome)) {
-            Node *temp = curr->prox;
-            curr->prox = temp->prox;
-            if (temp->prox != NULL) {
-                temp->prox->ant = curr;
-            }
-            temp->prox = NULL;
-            temp->ant = NULL;
+  while (aux != NULL && aux->prox != NULL) {
+    if (strlen(aux->nome) == strlen(aux->prox->nome)) {
+      Node *temp = aux->prox;
+      aux->prox = temp->prox;
 
-            if (novalista == NULL) {
-                novalista = temp;
-            } else {
-                Node *last = novalista;
-                while (last->prox != NULL) {
-                    last = last->prox;
-                }
-                last->prox = temp;
-                temp->ant = last;
-            }
-        } else {
-            curr = curr->prox;
+      if (temp->prox != NULL) {
+        temp->prox->ant = aux;
+      }
+
+      temp->prox = NULL;
+      temp->ant = NULL;
+
+      if (novalista == NULL) {
+        novalista = temp;
+      } else {
+        Node *last = novalista;
+        while (last->prox != NULL) {
+          last = last->prox;
         }
+        last->prox = temp;
+        temp->ant = last;
+      }
+    } else {
+      aux = aux->prox;
     }
+  }
+  return novalista;
+}
 
-    return novalista;
+int contador(Node *head){
+  int cont = 0;
+  while(head != NULL){
+    cont++;
+    head = head->prox;
+  }
+  return cont;
 }
