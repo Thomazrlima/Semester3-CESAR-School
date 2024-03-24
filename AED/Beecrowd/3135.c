@@ -36,15 +36,19 @@ int main(void) {
   }
 
   for (int i = 0; i < num; i++) {
-    printf("\n");
-    imprimir(&linha[i]);
     
-    Node *temp = linha[i];
-    
-    while (temp != NULL) {
-      Node *next = temp->prox;
-      free(temp);
-      temp = next;
+
+    if (linha[i] != NULL) {
+      printf("\n");
+      imprimir(&linha[i]);
+  
+      Node *temp = linha[i];
+  
+      while (temp != NULL) {
+        Node *next = temp->prox;
+        free(temp);
+        temp = next;
+      }
     }
   }
   free(linha);
