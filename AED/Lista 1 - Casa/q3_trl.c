@@ -12,6 +12,7 @@ void add(Node **head, char *nome);
 void imprimir(Node **head);
 Node* separar(Node **head);
 int contador(Node *head);
+void printLista(Node *head);
 
 int main(void) {
   int N;
@@ -36,14 +37,13 @@ int main(void) {
   }
 
   for (int i = 0; i < num; i++) {
-    
 
     if (linha[i] != NULL) {
       printf("\n");
       imprimir(&linha[i]);
-  
+
       Node *temp = linha[i];
-  
+
       while (temp != NULL) {
         Node *next = temp->prox;
         free(temp);
@@ -51,6 +51,7 @@ int main(void) {
       }
     }
   }
+  
   free(linha);
 
   return 0;
@@ -100,36 +101,32 @@ void imprimir(Node **head) {
 }
 
 Node* separar(Node **head) {
-  Node *novalista = NULL;
-  Node *aux = *head;
+  if (!*head || !(*head)->prox) return NULL;
 
-  while (aux != NULL && aux->prox != NULL) {
-    if (strlen(aux->nome) == strlen(aux->prox->nome)) {
-      Node *temp = aux->prox;
-      aux->prox = temp->prox;
+  Node *current = *head;
+  Node *startNewList = NULL; 
+  Node *lastNewList = NULL; 
 
-      if (temp->prox != NULL) {
-        temp->prox->ant = aux;
-      }
-
-      temp->prox = NULL;
-      temp->ant = NULL;
-
-      if (novalista == NULL) {
-        novalista = temp;
+  while (current && current->prox) {
+    if (strlen(current->nome) == strlen(current->prox->nome)) {
+      if (!startNewList) {
+        startNewList = current->prox; 
+        lastNewList = startNewList;
       } else {
-        Node *last = novalista;
-        while (last->prox != NULL) {
-          last = last->prox;
-        }
-        last->prox = temp;
-        temp->ant = last;
+        lastNewList->prox = current->prox; 
+        lastNewList = lastNewList->prox;
       }
+
+      current->prox = current->prox->prox;
+      if (current->prox) current->prox->ant = current;
+      lastNewList->prox = NULL; 
     } else {
-      aux = aux->prox;
+      current = current->prox;
     }
   }
-  return novalista;
+
+  return startNewList; 
+
 }
 
 int contador(Node *head){
@@ -139,4 +136,16 @@ int contador(Node *head){
     head = head->prox;
   }
   return cont;
+}
+
+void printLista(Node *head){
+  Node *current = head;
+  while (current != NULL) {
+    printf("%s", current->nome);
+    if(current -> prox != NULL){
+      printf(", ");
+    }
+    current = current->prox;
+  }
+  printf("\n");
 }
