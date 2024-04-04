@@ -35,6 +35,7 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
 
   while (atual <= total) {
 
+<<<<<<< HEAD
     int flag = 0;
 
     for (i = 0; i < qtd; i++) {
@@ -46,17 +47,33 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
           tarefas[i].resto--;
           tarefas[i].units++;
           flag = 1;
+=======
+    for (i = 0; i < qtd; i++) {
+      for (j = 0; j < qtd; j++) {
+
+        if (tarefas[i].prioridade < tarefas[j].prioridade &&
+            tarefas[i].resto != 0) {
+          printf("Executando tarefa %s %d\n", tarefas[i].nome, atual); // Debug
+          tarefas[i].resto--;
+          tarefas[i].units++;
+>>>>>>> edd0951f3e1df592ca49894c771a4e669fa71868
 
           if (tarefas[i].resto == 0) {
             tarefas[i].completo += 1;
             tarefas[i].prioridade = 999;
+<<<<<<< HEAD
             printf("[%s] for %d units - F\n", tarefas[i].nome, tarefas[i].units);
+=======
+            printf("[%s] for %d units - K\n", tarefas[i].nome,
+                   tarefas[i].units);
+>>>>>>> edd0951f3e1df592ca49894c771a4e669fa71868
             tarefas[i].units = 0;
           }
         }
       }
     }
 
+<<<<<<< HEAD
     if (!flag) {
       printf("idle for %d units\n", idle);
       idle++;
@@ -64,23 +81,42 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
       idle = 0;
     }
 
+=======
+>>>>>>> edd0951f3e1df592ca49894c771a4e669fa71868
     for (i = 0; i < qtd; i++) {
       if (atual % tarefas[i].periodo == 0) {
 
         if (tarefas[i].resto != 0) {
 
+<<<<<<< HEAD
           printf("[%s] for %d units - L\n", tarefas[i].nome, tarefas[i].units);
           tarefas[i].resto = tarefas[i].cpub;
           tarefas[i].perdido += 1;
           tarefas[i].prioridade = tarefas[i].periodo;
           tarefas[i].units = 0;
           // printf("%d\n", tarefas[i].prioridade); // Debug
+=======
+          tarefas[i].resto = tarefas[i].cpub;
+          tarefas[i].perdido += 1;
+          tarefas[i].prioridade = tarefas[i].periodo;
+          printf("%d\n", tarefas[i].prioridade); // Debug
+          for (j = i; j < qtd; j++) {
+            if (tarefas[i].prioridade < tarefas[j].prioridade) {
+              printf("%d\n", tarefas[j].prioridade);
+              atual--;
+            }
+          }
+>>>>>>> edd0951f3e1df592ca49894c771a4e669fa71868
 
         } else {
 
           tarefas[i].resto = tarefas[i].cpub;
           tarefas[i].prioridade = tarefas[i].periodo;
+<<<<<<< HEAD
           // printf("%d\n", tarefas[i].prioridade); // Debug
+=======
+          printf("%d\n", tarefas[i].prioridade); // Debug
+>>>>>>> edd0951f3e1df592ca49894c771a4e669fa71868
         }
       }
     }
