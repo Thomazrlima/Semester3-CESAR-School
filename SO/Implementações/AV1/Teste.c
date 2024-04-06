@@ -245,7 +245,7 @@ int edf_prioridade(struct Tarefa tarefas[], int qtd) {
 
   for (i = 0; i < qtd; i++) {
     if (deadline > tarefas[i].dtd && tarefas[i].resto != 0) {
-      deadline = tarefas[i].dtd;
+      deadline = i;
     }
   }
   return deadline;
