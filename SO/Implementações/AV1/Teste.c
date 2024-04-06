@@ -56,12 +56,16 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
       tarefas[exe].completo += fim(tarefas, exe);
     }else{
       idle++;
+    }
+
+    if(exetemp == 999 && exe != 999 && atual > 1){
       printf("idle for %d units\n", idle);
+      idle = 0;
     }
 
     novoprocesso(tarefas, qtd, atual);
 
-    if (atual == total) {
+    if (atual == total && exe != 999) {
       for (i = 0; i < qtd; i++) {
         if (tarefas[i].resto - 1 > 0) {
           tarefas[i].morto++;
