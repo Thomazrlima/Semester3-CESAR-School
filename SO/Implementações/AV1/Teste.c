@@ -19,13 +19,13 @@ int prioridade(struct Tarefa tarefas[], int qtd);
 int fim(struct Tarefa tarefas[], int exe);
 
 int main(void) {
-  struct Tarefa tarefas[2];
-  int periodos[2] = {50, 80};
-  int execucoes[2] = {25, 35};
-  int qtd = 2;
+  struct Tarefa tarefas[3];
+  int periodos[3] = {50, 30, 60};
+  int execucoes[3] = {10, 15, 5};
+  int qtd = 3;
   
   iniciarTarefas(tarefas, periodos, execucoes, qtd);
-  rate(tarefas, qtd, 165);
+  rate(tarefas, qtd, 170);
 
   return 0;
 }
@@ -129,12 +129,18 @@ void novoprocesso(struct Tarefa tarefas[], int qtd, int atual) {
 }
 
 int prioridade(struct Tarefa tarefas[], int qtd) {
-  int i, j;
+  int i;
   int menor = 999;
 
   for (i = 0; i < qtd; i++) {
     if (menor > tarefas[i].prioridade && tarefas[i].resto != 0) {
-      menor = i;
+      menor = tarefas[i].prioridade;
+    }
+  }
+
+  for (i = 0; i < qtd; i++) {
+    if (tarefas[i].prioridade == menor && tarefas[i].resto != 0) {
+      return i;
     }
   }
   return menor;
