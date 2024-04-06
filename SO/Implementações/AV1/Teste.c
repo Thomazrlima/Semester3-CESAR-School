@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 struct Tarefa {
-  char nome[3];
+  char nome[4];
   int periodo;
   int cpub;
   int resto;
@@ -12,59 +12,42 @@ struct Tarefa {
   int units;
 };
 
-void rate(struct Tarefa tarefas[], int qtd, int total);;
-void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[],
-                    int qtd);
-void novoprocesso (struct Tarefa tarefas[], int qtd, int atual);
-int idle(int flag);
+void rate(struct Tarefa tarefas[], int qtd, int total);
+void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[], int qtd);
+void novoprocesso(struct Tarefa tarefas[], int qtd, int atual);
+int prioridade(struct Tarefa tarefas[], int qtd);
+int fim(struct Tarefa tarefas[], int exe);
 
 int main(void) {
   struct Tarefa tarefas[2];
   int periodos[2] = {50, 80};
   int execucoes[2] = {25, 35};
   int qtd = 2;
-
+  
   iniciarTarefas(tarefas, periodos, execucoes, qtd);
-
   rate(tarefas, qtd, 165);
 
   return 0;
 }
 
 void rate(struct Tarefa tarefas[], int qtd, int total) {
-  int atual = 1, bou = 1, idle = 0;
+  int atual, idle = 0;
   int i, j;
+  char tempnome[4];
 
-  while (atual <= total) {
+  for (atual = 1, i = 0; atual < total; atual++) {
+    int flag = 1;
 
-    int flag = 0;
-
-    for (i = 0; i < qtd; i++) {
-      for (j = 0; j < qtd; j++) {
-
-        if (tarefas[i].prioridade < tarefas[j].prioridade &&
-            tarefas[i].resto != 0) {
-          tarefas[i].resto--;
-          tarefas[i].units++;
-          flag = 1;
-
-          if (tarefas[i].resto == 0) {
-            tarefas[i].completo += 1;
-            tarefas[i].prioridade = 999;
-            printf("[%s] for %d units - F\n", tarefas[i].nome, tarefas[i].units);
-            tarefas[i].units = 0;
-          }
-        }
-      }
-    }
-
+    int exe = prioridade(tarefas, qtd);
     novoprocesso(tarefas, qtd, atual);
 
-    if (!flag) {
-      printf("idle for %d units\n", idle);
+    if (exe != 999){
+      tarefas[exe].resto--;
+      tarefas[exe].completo += fim(tarefas, exe);
+      tarefas[exe].units++;
+      printf("tarefa %s %d\n", tarefas[exe].nome, atual);
+    }else{
       idle++;
-    } else {
-      idle = 0;
     }
 
     if (atual + 1 == total) {
@@ -74,8 +57,6 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
         }
       }
     }
-
-    atual++;
   }
 
   printf("EXECUTION BY RATE\n");
@@ -96,8 +77,7 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
   }
 }
 
-void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[],
-                    int qtd) {
+void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[], int qtd) {
   for (int i = 0; i < qtd; i++) {
     sprintf(tarefas[i].nome, "T%d", i + 1);
     tarefas[i].periodo = periodos[i];
@@ -111,9 +91,9 @@ void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[],
   }
 }
 
-void novoprocesso (struct Tarefa tarefas[], int qtd, int atual){
+void novoprocesso(struct Tarefa tarefas[], int qtd, int atual) {
   int i;
-  
+
   for (i = 0; i < qtd; i++) {
     if (atual % tarefas[i].periodo == 0) {
 
@@ -132,4 +112,23 @@ void novoprocesso (struct Tarefa tarefas[], int qtd, int atual){
       }
     }
   }
+}
+
+int prioridade(struct Tarefa tarefas[], int qtd) {
+  int i, j;
+  int menor = 999;
+
+  for (i = 0; i < qtd; i++) {
+    if (menor > tarefas[i].prioridade && tarefas[i].resto != 0) {
+      menor = i;
+    }
+  }
+  return menor;
+}
+
+int fim(struct Tarefa tarefas[], int exe) {
+  if (tarefas[exe].resto == 0) {
+    return 1;
+  }
+  return 0;
 }
