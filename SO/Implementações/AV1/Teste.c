@@ -32,23 +32,34 @@ int main(void) {
 
 void rate(struct Tarefa tarefas[], int qtd, int total) {
   int atual, idle = 0;
+  int exe = 999, exetemp = 999;
   int i, j;
   char tempnome[4];
+
+  printf("EXECUTION BY RATE\n");
 
   for (atual = 1, i = 0; atual <= total; atual++) {
     int flag = 1;
 
-    int exe = prioridade(tarefas, qtd);
-    novoprocesso(tarefas, qtd, atual);
+    exetemp = exe;
+    exe = prioridade(tarefas, qtd);
+
+    if (exe != exetemp && atual > 1 && exetemp >= 0 && exetemp < qtd && tarefas[exetemp].resto != 0) {
+        printf("[%s] for %d units - H\n", tarefas[exetemp].nome, tarefas[exetemp].units);
+        tarefas[exetemp].units = 0;
+    }
 
     if (exe != 999){
-      printf("tarefa %s %d\n", tarefas[exe].nome, atual);
+      //printf("tarefa %s %d\n", tarefas[exe].nome, atual);
       tarefas[exe].resto--;
       tarefas[exe].units++;
       tarefas[exe].completo += fim(tarefas, exe);
     }else{
       idle++;
+      printf("idle for %d units\n", idle);
     }
+
+    novoprocesso(tarefas, qtd, atual);
 
     if (atual == total) {
       for (i = 0; i < qtd; i++) {
@@ -60,19 +71,17 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
     }
   }
 
-  printf("EXECUTION BY RATE\n");
-
-  printf("LOST DEADLINES\n");
+  printf("\nLOST DEADLINES\n");
   for (i = 0; i < qtd; i++) {
     printf("[%s] %d\n", tarefas[i].nome, tarefas[i].perdido);
   }
 
-  printf("COMPLETE EXECUTION\n");
+  printf("\nCOMPLETE EXECUTION\n");
   for (i = 0; i < qtd; i++) {
     printf("[%s] %d\n", tarefas[i].nome, tarefas[i].completo);
   }
 
-  printf("KILLED\n");
+  printf("\nKILLED\n");
   for (i = 0; i < qtd; i++) {
     printf("[%s] %d\n", tarefas[i].nome, tarefas[i].morto);
   }
