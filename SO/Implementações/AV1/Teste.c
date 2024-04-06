@@ -35,27 +35,28 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
   int i, j;
   char tempnome[4];
 
-  for (atual = 1, i = 0; atual < total; atual++) {
+  for (atual = 1, i = 0; atual <= total; atual++) {
     int flag = 1;
 
     int exe = prioridade(tarefas, qtd);
     novoprocesso(tarefas, qtd, atual);
 
     if (exe != 999){
-      tarefas[exe].resto--;
-      tarefas[exe].completo += fim(tarefas, exe);
-      tarefas[exe].units++;
       printf("tarefa %s %d\n", tarefas[exe].nome, atual);
+      tarefas[exe].resto--;
+      tarefas[exe].units++;
+      tarefas[exe].completo += fim(tarefas, exe);
     }else{
       idle++;
     }
 
-    if (atual + 1 == total) {
+    if (atual == total) {
       for (i = 0; i < qtd; i++) {
         if (tarefas[i].resto - 1 > 0) {
           tarefas[i].morto++;
         }
       }
+      printf("[%s] for %d units - K\n", tarefas[exe].nome, tarefas[exe].units);
     }
   }
 
@@ -128,6 +129,8 @@ int prioridade(struct Tarefa tarefas[], int qtd) {
 
 int fim(struct Tarefa tarefas[], int exe) {
   if (tarefas[exe].resto == 0) {
+    printf("[%s] for %d units - F\n", tarefas[exe].nome, tarefas[exe].units);
+    tarefas[exe].units = 0;
     return 1;
   }
   return 0;
