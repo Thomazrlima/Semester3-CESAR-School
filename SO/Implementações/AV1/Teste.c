@@ -22,7 +22,7 @@ void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[],
                     int qtd);
 void novoprocesso(struct Tarefa tarefas[], int qtd, int atual);
 int fim(struct Tarefa tarefas[], int exe);
-void morte(struct Tarefa tarefas[], int qtd, int exe, int total);
+void morte(struct Tarefa tarefas[], int qtd, int exe, int total, int atual);
 
 // Funções Rate
 int rate_prioridade(struct Tarefa tarefas[], int qtd, int total);
@@ -38,8 +38,8 @@ int main(void) {
   int qtd = 2;
 
   iniciarTarefas(tarefas, periodos, execucoes, qtd);
-  // rate(tarefas, qtd, 165);
-  edf(tarefas, qtd, 165);
+  rate(tarefas, qtd, 165);
+  // edf(tarefas, qtd, 165);
 
   return 0;
 }
@@ -74,14 +74,15 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
       idle++;
     }
 
-    if (exetemp == total && exe != total && atual > 1) {
+    if (exetemp == total && exe != total && atual > 1 || exetemp == atual) {
       printf("idle for %d units\n", idle);
       idle = 0;
     }
 
     novoprocesso(tarefas, qtd, atual);
+    
     if (atual == total) {
-      morte(tarefas, qtd, exe, total);
+      morte(tarefas, qtd, exe, total, atual);
     }
   }
 
@@ -131,14 +132,14 @@ void edf(struct Tarefa tarefas[], int qtd, int total) {
       tarefas[j].dtd--;
     }
 
-    if (exetemp == total && exe != total && atual > 1) {
+    if (exetemp == total && exe != total && atual > 1 || exetemp == atual) {
       printf("idle for %d units\n", idle);
       idle = 0;
     }
 
     novoprocesso(tarefas, qtd, atual);
     if (atual == total) {
-      morte(tarefas, qtd, exe, total);
+      morte(tarefas, qtd, exe, total, atual);
     }
   }
 
@@ -209,7 +210,7 @@ int fim(struct Tarefa tarefas[], int exe) {
   return 0;
 }
 
-void morte(struct Tarefa tarefas[], int qtd, int exe, int total) {
+void morte(struct Tarefa tarefas[], int qtd, int exe, int total, int atual) {
 
   int i = 0;
 
@@ -220,6 +221,12 @@ void morte(struct Tarefa tarefas[], int qtd, int exe, int total) {
       }
     }
     printf("[%s] for %d units - K\n", tarefas[exe].nome, tarefas[exe].units);
+  }else if(atual == total){
+    for (i = 0; i < qtd; i++){
+      if (tarefas[i].resto > 0){
+        tarefas[i].morto++;
+      }
+    }
   }
 }
 
