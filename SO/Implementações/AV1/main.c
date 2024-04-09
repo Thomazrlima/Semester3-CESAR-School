@@ -1,7 +1,15 @@
 #include <stdio.h>
 
+#ifdef EDF
+#define ESCOLHA 'E'
+#elif RATE
+#define ESCOLHA 'R'
+#else
+#define ESCOLHA 'N'
+#endif
+
 struct Tarefa {
-  char nome[4];
+  char nome[50];
   int periodo;
   int cpub;
   int resto;
@@ -13,16 +21,17 @@ struct Tarefa {
   int dtd;
 };
 
+char alg = ESCOLHA;
+
 // Escalonamento
 void rate(struct Tarefa tarefas[], int qtd, int total);
 void edf(struct Tarefa tarefas[], int qtd, int total);
 
 // Funções Gerais
-void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[],
-                    int qtd);
-void novoprocesso(struct Tarefa tarefas[], int qtd, int atual);
-int fim(struct Tarefa tarefas[], int exe);
-void morte(struct Tarefa tarefas[], int qtd, int exe, int total, int atual);
+void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[], int qtd);
+void novoprocesso(struct Tarefa tarefas[], int qtd, int atual, FILE *fp);
+int fim(struct Tarefa tarefas[], int exe, FILE *fp);
+void morte(struct Tarefa tarefas[], int qtd, int exe, int total, int atual, FILE *fp);
 
 // Funções Rate
 int rate_prioridade(struct Tarefa tarefas[], int qtd, int total);
@@ -31,26 +40,52 @@ int rate_prioridade(struct Tarefa tarefas[], int qtd, int total);
 int edf_prioridade(struct Tarefa tarefas[], int qtd, int tempo);
 
 // Main
-int main(void) {
+int main(int argc, char *argv[]) {
   struct Tarefa tarefas[2];
-  int periodos[2] = {50, 80};
-  int execucoes[2] = {25, 35};
   int qtd = 2;
 
+  FILE *dados;
+  dados = fopen(argv[1], "r");
+
+  if (dados == NULL) {
+    printf("Erro ao abrir o arquivo.\n");
+    return 1;
+  }
+
+  int total;
+  fscanf(dados, "%d", &total);
+
+  int periodos[qtd], execucoes[qtd];
+
+  for (int i = 0; i < qtd; i++) {
+    fscanf(dados, "%s %d %d", tarefas[i].nome, &periodos[i], &execucoes[i]);
+  }
+
+  fclose(dados);
+
   iniciarTarefas(tarefas, periodos, execucoes, qtd);
-  rate(tarefas, qtd, 165);
-  // edf(tarefas, qtd, 165);
+
+  if(ESCOLHA == 'R') {
+    rate(tarefas, qtd, total);
+  }else if(ESCOLHA == 'E') {
+    edf(tarefas, qtd, total);
+  }else {
+    printf("Vish, digitou errado");
+  }
 
   return 0;
 }
 
 // Escalonamento
 void rate(struct Tarefa tarefas[], int qtd, int total) {
+  FILE *fp;
+  fp = fopen("rate.out", "w");
+
   int atual, idle = 0;
   int exe = total, exetemp = total;
   int i, j;
 
-  printf("EXECUTION BY RATE\n");
+  fprintf(fp, "EXECUTION BY RATE\n");
 
   for (atual = 1, i = 0; atual <= total; atual++) {
     int flag = 1;
@@ -58,10 +93,8 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
     exetemp = exe;
     exe = rate_prioridade(tarefas, qtd, total);
 
-    if (exe != exetemp && atual > 1 && exetemp >= 0 && exetemp < qtd &&
-        tarefas[exetemp].resto != 0) {
-      printf("[%s] for %d units - H\n", tarefas[exetemp].nome,
-             tarefas[exetemp].units);
+    if (exe != exetemp && atual > 1 && exetemp >= 0 && exetemp < qtd && tarefas[exetemp].resto != 0) {
+      fprintf(fp, "[%s] for %d units - H\n", tarefas[exetemp].nome, tarefas[exetemp].units);
       tarefas[exetemp].units = 0;
     }
 
@@ -69,61 +102,66 @@ void rate(struct Tarefa tarefas[], int qtd, int total) {
       // printf("tarefa %s %d\n", tarefas[exe].nome, atual);
       tarefas[exe].resto--;
       tarefas[exe].units++;
-      tarefas[exe].completo += fim(tarefas, exe);
+      tarefas[exe].completo += fim(tarefas, exe, fp);
     } else {
       idle++;
     }
 
     if (exetemp == total && exe != total && atual > 1 || exetemp == atual) {
-      printf("idle for %d units\n", idle);
+      fprintf(fp, "idle for %d units\n", idle);
       idle = 0;
     }
 
-    novoprocesso(tarefas, qtd, atual);
-    
+    novoprocesso(tarefas, qtd, atual, fp);
+
     if (atual == total) {
-      morte(tarefas, qtd, exe, total, atual);
+      morte(tarefas, qtd, exe, total, atual, fp);
     }
   }
 
-  printf("\nLOST DEADLINES\n");
+  fprintf(fp, "\nLOST DEADLINES\n");
   for (i = 0; i < qtd; i++) {
-    printf("[%s] %d\n", tarefas[i].nome, tarefas[i].perdido);
+    fprintf(fp, "[%s] %d\n", tarefas[i].nome, tarefas[i].perdido);
   }
 
-  printf("\nCOMPLETE EXECUTION\n");
+  fprintf(fp, "\nCOMPLETE EXECUTION\n");
   for (i = 0; i < qtd; i++) {
-    printf("[%s] %d\n", tarefas[i].nome, tarefas[i].completo);
+    fprintf(fp, "[%s] %d\n", tarefas[i].nome, tarefas[i].completo);
   }
 
-  printf("\nKILLED\n");
+  fprintf(fp, "\nKILLED\n");
   for (i = 0; i < qtd; i++) {
-    printf("[%s] %d\n", tarefas[i].nome, tarefas[i].morto);
+    fprintf(fp, "[%s] %d", tarefas[i].nome, tarefas[i].morto);
+    if (i < qtd - 1) {
+      fprintf(fp, "\n");
+    }
   }
+  fclose(fp);
 }
 
 void edf(struct Tarefa tarefas[], int qtd, int total) {
+  FILE *fp;
+  fp = fopen("edf.out", "w");
+
   int atual, i, j, idle = 0;
   int exe = total, exetemp = total;
 
-  printf("EXECUTION BY EDF\n");
+  fprintf(fp, "EXECUTION BY EDF\n");
 
   for (atual = 1, i = 0; atual <= total; atual++) {
 
     exetemp = exe;
     exe = edf_prioridade(tarefas, qtd, total);
 
-    if (exe != exetemp && atual > 1 && exetemp >= 0 && exetemp < qtd &&
-        tarefas[exetemp].resto != 0) {
-      printf("[%s] for %d units - H\n", tarefas[exetemp].nome,
-             tarefas[exetemp].units);
+    if (exe != exetemp && atual > 1 && exetemp >= 0 && exetemp < qtd && tarefas[exetemp].resto != 0) {
+      fprintf(fp,"[%s] for %d units - H\n", tarefas[exetemp].nome, tarefas[exetemp].units);
       tarefas[exetemp].units = 0;
     }
 
     if (exe != total) {
       tarefas[exe].resto--;
       tarefas[exe].units++;
-      tarefas[exe].completo += fim(tarefas, exe);
+      tarefas[exe].completo += fim(tarefas, exe, fp);
     } else {
       idle++;
     }
@@ -133,35 +171,38 @@ void edf(struct Tarefa tarefas[], int qtd, int total) {
     }
 
     if (exetemp == total && exe != total && atual > 1 || exetemp == atual) {
-      printf("idle for %d units\n", idle);
+      fprintf(fp, "idle for %d units\n", idle);
       idle = 0;
     }
 
-    novoprocesso(tarefas, qtd, atual);
+    novoprocesso(tarefas, qtd, atual, fp);
     if (atual == total) {
-      morte(tarefas, qtd, exe, total, atual);
+      morte(tarefas, qtd, exe, total, atual, fp);
     }
   }
 
-  printf("\nLOST DEADLINES\n");
+  fprintf(fp, "\nLOST DEADLINES\n");
   for (i = 0; i < qtd; i++) {
-    printf("[%s] %d\n", tarefas[i].nome, tarefas[i].perdido);
+    fprintf(fp, "[%s] %d\n", tarefas[i].nome, tarefas[i].perdido);
   }
 
-  printf("\nCOMPLETE EXECUTION\n");
+  fprintf(fp, "\nCOMPLETE EXECUTION\n");
   for (i = 0; i < qtd; i++) {
-    printf("[%s] %d\n", tarefas[i].nome, tarefas[i].completo);
+    fprintf(fp, "[%s] %d\n", tarefas[i].nome, tarefas[i].completo);
   }
 
-  printf("\nKILLED\n");
+  fprintf(fp, "\nKILLED\n");
   for (i = 0; i < qtd; i++) {
-    printf("[%s] %d\n", tarefas[i].nome, tarefas[i].morto);
+    fprintf(fp, "[%s] %d", tarefas[i].nome, tarefas[i].morto);
+    if (i < qtd - 1) {
+      fprintf(fp, "\n");
+    }
   }
+  fclose(fp);
 }
 
 // Funções Gerais
-void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[],
-                    int qtd) {
+void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[], int qtd) {
   for (int i = 0; i < qtd; i++) {
     sprintf(tarefas[i].nome, "T%d", i + 1);
     tarefas[i].periodo = periodos[i];
@@ -176,7 +217,7 @@ void iniciarTarefas(struct Tarefa tarefas[], int periodos[], int execucoes[],
   }
 }
 
-void novoprocesso(struct Tarefa tarefas[], int qtd, int atual) {
+void novoprocesso(struct Tarefa tarefas[], int qtd, int atual, FILE *fp) {
   int i;
 
   for (i = 0; i < qtd; i++) {
@@ -184,7 +225,7 @@ void novoprocesso(struct Tarefa tarefas[], int qtd, int atual) {
 
       if (tarefas[i].resto != 0) {
 
-        printf("[%s] for %d units - L\n", tarefas[i].nome, tarefas[i].units);
+        fprintf(fp, "[%s] for %d units - L\n", tarefas[i].nome, tarefas[i].units);
         tarefas[i].resto = tarefas[i].cpub;
         tarefas[i].perdido += 1;
         tarefas[i].prioridade = tarefas[i].periodo;
@@ -201,17 +242,7 @@ void novoprocesso(struct Tarefa tarefas[], int qtd, int atual) {
   }
 }
 
-int fim(struct Tarefa tarefas[], int exe) {
-  if (tarefas[exe].resto == 0) {
-    printf("[%s] for %d units - F\n", tarefas[exe].nome, tarefas[exe].units);
-    tarefas[exe].units = 0;
-    return 1;
-  }
-  return 0;
-}
-
-void morte(struct Tarefa tarefas[], int qtd, int exe, int total, int atual) {
-
+void morte(struct Tarefa tarefas[], int qtd, int exe, int total, int atual, FILE *fp) {
   int i = 0;
 
   if (exe != total) {
@@ -220,14 +251,23 @@ void morte(struct Tarefa tarefas[], int qtd, int exe, int total, int atual) {
         tarefas[i].morto++;
       }
     }
-    printf("[%s] for %d units - K\n", tarefas[exe].nome, tarefas[exe].units);
-  }else if(atual == total){
-    for (i = 0; i < qtd; i++){
-      if (tarefas[i].resto > 0){
+    fprintf(fp, "[%s] for %d units - K\n", tarefas[exe].nome, tarefas[exe].units);
+  } else if(atual == total) {
+    for (i = 0; i < qtd; i++) {
+      if (tarefas[i].resto > 0) {
         tarefas[i].morto++;
       }
     }
   }
+}
+
+int fim(struct Tarefa tarefas[], int exe, FILE *fp) {
+  if (tarefas[exe].resto == 0) {
+    fprintf(fp, "[%s] for %d units - F\n", tarefas[exe].nome, tarefas[exe].units);
+    tarefas[exe].units = 0;
+    return 1;
+  }
+  return 0;
 }
 
 // Funções Rate
