@@ -22,7 +22,7 @@ struct Tarefa {
     int dtd;
 };
 
-//char alg = ESCOLHA;
+char alg = ESCOLHA;
 
 // Escalonamento
 void rate(struct Tarefa tarefas[], int qtd, int total);
@@ -45,7 +45,7 @@ int edf_prioridade(struct Tarefa tarefas[], int qtd, int tempo);
 int main(int argc, char *argv[]) {
     FILE *dados;
     dados = fopen(argv[1], "r");
-    //dados = fopen("/Users/evaldocunhafilho/CLionProjects/teste/input.txt", "r");
+    //dados = fopen("/Users/evaldocunhafilho/CLionProjects/untitled/test_rate/01.txt", "r");
 
     int qtd = qtdprocessos(dados);
     struct Tarefa *tarefas = (struct Tarefa *)malloc(qtd * sizeof(struct Tarefa));
@@ -65,9 +65,9 @@ int main(int argc, char *argv[]) {
 
     iniciarTarefas(tarefas, qtd);
 
-    if(ESCOLHA == 'R') {
+    if(alg == 'R') {
         rate(tarefas, qtd, total);
-    }else if(ESCOLHA == 'E') {
+    }else if(alg == 'E') {
         edf(tarefas, qtd, total);
     }else {
         printf("Vish, digitou errado");
