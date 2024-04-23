@@ -22,69 +22,20 @@ void selection_sort (int lista[], int N);
 void printarray(int lista[], int N);
 void bubble_sort (int lista[], int N);
 void insersion_sort(int lista[], int N);
+void ordenar_lista_selection_sort(Node *head);
+void ordenar_lista_bubble_sort(Node *head);
+void inserirlista(Node **head, int valor);
+void imprimirlista(Node *head);
 
 int main() {
-
-    int lista[5] = {7, 8, 5, 9, 1};
-    int N = sizeof(lista)/sizeof(lista[0]);
-    int caso, teste, caso1;
     Node *head  = NULL;
-    Node *tail = NULL;
-
-    printf("O que vocedeseja testar?\n");
-    scanf("%d", &teste);
-    switch (teste) {
-        case 1:
-
-            printf("1 - Seletion Sort\n2 - Bubble Sort\n3 - Insersion Sort\n");
-            printf("Digite o Algoritimo que vai ser usado:");
-            scanf("%d", &caso);
-
-            switch (caso) {
-                case 1:
-                    selection_sort (lista, N);
-                break;
-                case 2:
-                    bubble_sort (lista,N);
-                break;
-                case 3:
-                    insersion_sort(lista, N);
-                break;
-            }
-
-            printarray(lista, N);
-        break;
-
-        case 2:
-            printf("1 - Pilha\n2 - Fila\n");
-            scanf("%d", &caso1);
-            switch (caso1) {
-                case 1:
-                    printf("Digite o valor do ID do Paciente:");
-                    int valor = 1;
-                    while(valor != 0) {
-                        scanf("%d", &valor);
-                        addpilha(&head, valor);
-                    }
-                    printlista(head);
-                    removepilha(&head);
-                    printlista(head);
-                break;
-                case 2:
-                    printf("Digite o valor do ID do Paciente:");
-                    valor = 1;
-                    while(valor != 0) {
-                        scanf("%d", &valor);
-                        addfila(&head, &tail, valor);
-                    }
-                    printlista(head);
-                    removefila(&head, &tail);
-                    printlista(head);
-                break;
-            }
-        break;
-    }
-
+    inserirlista(&head, 8);
+    inserirlista(&head, 10);
+    inserirlista(&head, 1);
+    inserirlista(&head, 15);
+    inserirlista(&head, 100);
+    ordenar_lista_bubble_sort(head);
+    imprimirlista(head);
     return 0;
 }
 
@@ -237,4 +188,44 @@ void insersion_sort(int lista[], int N){
         }
     }
     printf("Total de trocas: %d\n", trocas);
+}
+
+
+void ordenar_lista_selection_sort(Node *head){
+    Node *i, *j, *min, *max;
+    int temp;
+    for(i = head; i != NULL; i = i->prox){
+        min = i;
+        for(j = i->prox; j != NULL; j = j->prox){
+            if(j->paciente < min->paciente){
+                min = j;
+            }
+        }
+        temp = i->paciente;
+        i->paciente = min->paciente;
+        min->paciente = temp;
+
+    }
+}
+
+
+
+
+void inserirlista(Node **head, int valor){
+    Node *novo = (Node *)malloc(sizeof(Node));
+    if(novo != NULL){
+        novo->paciente = valor;
+        novo->prox = *head;
+        *head = novo;
+    }
+}
+
+void imprimirlista(Node *head){
+    Node *aux = head;
+    if(aux != NULL){
+        while(aux->prox != NULL){
+            printf("%d ", aux->paciente);
+            aux = aux->prox;
+        }
+    }
 }

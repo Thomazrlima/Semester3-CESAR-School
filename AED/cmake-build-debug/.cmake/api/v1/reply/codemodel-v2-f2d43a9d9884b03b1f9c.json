@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "D:/PENTES/Pessoal/Semester3-CESAR-School/AED/cmake-build-debug",
-		"source" : "D:/PENTES/Pessoal/Semester3-CESAR-School/AED"
+		"build" : "C:/PENTES/Semester3-CESAR-School/AED/cmake-build-debug",
+		"source" : "C:/PENTES/Semester3-CESAR-School/AED"
 	},
 	"version" : 
 	{
