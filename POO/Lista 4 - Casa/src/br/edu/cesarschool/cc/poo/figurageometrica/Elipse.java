@@ -11,10 +11,12 @@ public class Elipse extends FiguraGeometrica{
     }
 
     public double getRaioMenor() {
+
         return raioMenor;
     }
 
     public double getRaioMaior() {
+
         return raioMaior;
     }
 
