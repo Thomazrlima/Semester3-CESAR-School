@@ -44,8 +44,6 @@ int main(void) {
                 remover(&head, &tail, &pontm, 0);
             }
         }
-
-        printLista(head, tail);
     }
 
     return 0;
@@ -63,9 +61,9 @@ void inserir(Node **head, Node **tail, int valor) {
         novo->ant = *tail;
         (*tail)->prox = novo;
         *tail = novo;
-        (*head)->ant = novo;
     }
     (*tail)->prox = *head;
+    (*head)->ant = novo;
 }
 
 void printLista(Node *head, Node *tail) {
@@ -119,6 +117,7 @@ void remover(Node **head, Node **tail, Node **removido, int flag) {
         *tail = remover->ant;
         remover->prox->ant = remover->ant;
         remover->ant->prox = remover->prox;
+        printf("  %d ", remover->valor);
         free(remover);
 
     } else if ((*head)->valor == pont->valor) {
@@ -126,6 +125,7 @@ void remover(Node **head, Node **tail, Node **removido, int flag) {
         *head = (*head)->prox;
         (*head)->ant = *tail;
         (*tail)->prox = *head;
+        printf("  %d ", remover->valor);
         free(remover);
     } else {
         remover = *head;
@@ -134,6 +134,7 @@ void remover(Node **head, Node **tail, Node **removido, int flag) {
         }
         remover->prox->ant = remover->ant;
         remover->ant->prox = remover->prox;
+        printf("  %d ", remover->valor);
         free(remover);
     }
 }
