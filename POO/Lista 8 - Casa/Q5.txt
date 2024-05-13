@@ -1,0 +1,8 @@
+ANDAR: tração animal
+ANDAR: motor
+LOCOMOVER: sem Mais
+VOAR: motor
+VOAR: sem mais
+LOCOMOVER: sem mais
+ANDAR: tração animal
+LOCOMOVER: sem mais
