@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/Lista 1 - Aula" isTestSource="false" packagePrefix="Questões" />
+      <sourceFolder url="file://$MODULE_DIR$/Lista 1 - Casa" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Lista 2 - Aula" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Lista 2 - Casa" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Lista 3 - Aula" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Lista 4 - Aula" isTestSource="false" packagePrefix="uml.sala" />
+      <sourceFolder url="file://$MODULE_DIR$/Lista 4 - Casa" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Lista 5 - Casa" isTestSource="false" packagePrefix="exercicioUML" />
+      <sourceFolder url="file://$MODULE_DIR$/Lista 6 - Casa" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/POO Continuado" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
