@@ -1,0 +1,8 @@
+a) lw $14, 200($5)
+Carrega o valor da memória no endereço calculado por 200 + valor do registrador $5 para o registrador $14.
+b) beq $11, $12, label
+Se o valor em $11 é igual ao valor em $12, desvia para o endereço indicado por label.
+e) add $11, $12, $10
+Soma os valores nos registradores $12 e $10, armazenando o resultado em $11.
+c) slt $15, $10, $9
+Define $15 como 1 se $10 é menor que $9, caso contrário, define $15 como 0.
