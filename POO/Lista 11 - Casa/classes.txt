@@ -1,0 +1,9 @@
+Pessoa
+TipoEmpresa
+getCodigo
+getEsfera
+getFaturamentoMaximo
+getIdentificadorUnico
+getNome
+getTipo
+isIsentaImposto
