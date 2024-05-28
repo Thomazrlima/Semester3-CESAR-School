@@ -1,0 +1,14 @@
+void roda_dir(Arv **aux) {
+
+
+
+
+}
+
+
+A rotação simples a direita ocorre quando temos um desbalanceamento da árvore, pois um de seus lado apresenta um descompaso 
+maior ou igual que 2, então o nó "avô" vira o nó da esquerda do seu nó direito, e o nó filho vira pai dos outros 2 nós, 
+assim mantendo o balanceamento.
+
+A rotação dupla a direita segue o mesmo princípio, só que para casos mais graves, já que ele terá que fazer a rotação tanto 
+para a direita quanto para a esquerda para manter o balanceamento.
