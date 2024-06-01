@@ -1,11 +1,11 @@
-# Thomaz Lima, 
-# Q2
+# Thomaz Lima, Pedro Silva, Sofia Saraiva
+# Q3
 # Infra de HW 2024.1
 #
 # Lê N e printa a sequencia decrescente:
 
 .data
-prompt: .asciiz "Enter an integer N: "
+prompt: .asciiz "Qual valor de N: "
 newline: .asciiz "\n"
 buffer: .space 4                # Armazena N
 
