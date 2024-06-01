@@ -22,7 +22,7 @@ main:
     # Ler x
     li $v0, 6                   # lê o float
     syscall
-    mov.s $f0, $f0              
+    mov.s $f1, $f0              
 
     # Entrada y
     li $v0, 4                   # Mesma logica
@@ -32,13 +32,14 @@ main:
     # Le float y
     li $v0, 6                   
     syscall
-    mov.s $f1, $f0              
+    mov.s $f0, $f0              
 
     # Compara x e y
     c.eq.s $f0, $f1             # if x = y, equal
     bc1t equal                  # if True
-    c.lt.s $f0, $f1             # x < y, less
-    bc1t less                   # if true
+    c.lt.s $f1, $f0             # x < y, less
+    bc1t less                  # if true
+    j greater
 
 greater:
     li $v0, 4                   

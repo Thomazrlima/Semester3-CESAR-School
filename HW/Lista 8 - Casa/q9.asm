@@ -32,12 +32,12 @@ main:
     syscall
 
     # Printa o comprimento da string
+    addi $t0, $t0, -1        # Remove o bit extra lido
+    move $a0, $t0         # Move o comprimento da string para $a0
     move $t0, $v0               # Salva o valor de $v0 em $t0
-    move $a0, $t0               # Move o comprimento da string para $a0
+                       
     li $v0, 1                   # Código de syscall para imprimir inteiro
     syscall
-
-    move $a0, $t0               # Restaura o valor original de $a0
 
     # Terminar o programa
     li $v0, 10                  # Finaliza o programa
@@ -46,13 +46,14 @@ main:
 # Função
 string_length:
     # Inicializa o comprimento como 0
-    li $t0, 0                   
+    li $t0, 0            
 
 length_loop:
     lb $t1, 0($a0)              # Carrega o byte atual da string
     beq $t1, $zero, end_length  # If == 0, sai do loop
     addi $t0, $t0, 1            # Length++
     addi $a0, $a0, 1            # Move
+    move $a1, $t0
     j length_loop               # Loopa
 
 end_length:
