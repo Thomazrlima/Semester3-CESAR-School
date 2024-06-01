@@ -1,4 +1,4 @@
-# Thomaz Lima, Pedro Silva, Sofia Saraiva
+# Thomaz Lima, Pedro Silva, Sofia Saraiva, Andre Goes
 # Q9
 # Infra de HW 2024.1
 # Vê o tamanho da string

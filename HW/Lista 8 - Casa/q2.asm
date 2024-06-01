@@ -1,4 +1,4 @@
-# Thomaz Lima, Pedro Silva, Sofia Saraiva
+# Thomaz Lima, Pedro Silva, Sofia Saraiva, Andre Goes
 # Q2
 # Infra de HW 2024.1
 #
