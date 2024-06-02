@@ -29,10 +29,10 @@ result: .asciiz "Soma da PG: "
     syscall
     move $t1, $v0          
 
-    # Calcula a soma s[n] da PG
-    move $a0, $t1          
-    move $a1, $a0          
+    # Calcula a soma s[n] da PG          
     jal somaPG
+    move $a0, $t0          
+    move $a1, $a0
     move $a1, $v0
     
     # print result
@@ -40,7 +40,7 @@ result: .asciiz "Soma da PG: "
     la $a0, result
     syscall
     # print soma
-    move $a0, $a1
+    move $a0, $t0
     li $v0, 1
     syscall
 
@@ -50,25 +50,33 @@ result: .asciiz "Soma da PG: "
 
 somaPG:
     # Prologue: Salvar o endereço de retorno e o registrador $ra
-    addi $sp, $sp, -8
-    sw $ra, 4($sp)
-    sw $a0, 0($sp)
+    addi $sp, $sp, -12
+    sw $ra, 8($sp)
+    sw $t1, 4($sp)
+    sw $t0, 0($sp)
 
     # Corpo da função
     # Verificar se n é 0
-    beq $a1, $zero, return_1
+    bgt $t0, $zero, lower
+    addi $sp, $sp, 12
+    jr $ra
 
-    # Caso geral: q*somaPG(n-1)
-    addi $a1, $a1, -1      # Decrementar n
-    jal somaPG             # Chamar a função recursivamente
-    lw $a0, 0($sp)         # Restaurar q
-    lw $ra, 4($sp)       # Obter o resultado da sub-rotina
-    mul $v0, $a0, $t0     # Calcular q*somaPG(n-1)
-    add $v0, $v1, $v0
-    j return_func
+lower:
+addi $t0, $t0, -1
+jal somaPG
+lw $ra, 8($sp)
+lw $t1, 4($sp)
+lw $t0, 0($sp)
+
+move $a0, $t0
+addi $sp, $sp, 12
+mult $a0, $t1
+mflo $a0
+add  $t0, $t0, $a0
+jr $ra
 
 return_1:
-    li $v0, 1              # Retornar 1 (caso n = 0)
+    li $v0, 1    # Retornar 1 (caso n = 0)
 
 return_func:
     # Epílogo: Restaurar o registrador $ra e retornar
