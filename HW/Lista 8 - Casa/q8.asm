@@ -1,7 +1,7 @@
 # Thomaz Lima, Pedro Silva, Sofia Saraiva, Andre Goes
-# Q8
+# Q8 - Soma PG
 # Infra de HW 2024.1
-# X com Y
+# PG
 
 .data
 prompt_q: .asciiz "Digite a razao q da PG: "
@@ -9,45 +9,13 @@ prompt_n: .asciiz "Digite o termo n da PG: "
 result: .asciiz "Soma da PG: "
 
 .text
-.globl main
-
-    li $v0, 1
-
-    beq $a0, $zero, termoPG_end
-
-    # Caso contrário, calcula termoPG(n-1) * q
-    subi $a0, $a0, 1
-    lw $t0, 0($a1)        # Carrega q
-    mul $v0, $v0, $t0     # Multiplica pelo anterior
-    j termoPG_end
-
-termoPG_end:
-    jr $ra                 # Return
-
-# recursiva:
-    li $v0, 1
-
-    # if true
-    beq $a0, $zero, somaPG_end
-
-    # else
-    subi $a0, $a0, 1       # n--
-    jal termoPG            # Chama o termo
-    add $v0, $v0, $a1      # Adiciona o termo a soma
-    j somaPG_end
-
-somaPG_end:
-    jr $ra                 # Return
-
-# main
-main:
-    # pede a razão q da PG
+ # pede a razão q da PG
     li $v0, 4
     la $a0, prompt_q
     syscall
 
     # pega o q
-    li $v0, 7
+    li $v0, 5
     syscall
     move $t0, $v0          
 
@@ -61,21 +29,58 @@ main:
     syscall
     move $t1, $v0          
 
-    # Calcula a soma s[n] da PG
-    move $a0, $t1          
-    move $a1, $t0          
+    # Calcula a soma s[n] da PG          
     jal somaPG
-
+    move $a0, $t0          
+    move $a1, $a0
+    move $a1, $v0
+    
     # print result
     li $v0, 4
     la $a0, result
     syscall
-
     # print soma
-    move $a0, $v0
+    move $a0, $t0
     li $v0, 1
     syscall
 
     # Finaliza
     li $v0, 10
     syscall
+
+somaPG:
+    # Prologue: Salvar o endereço de retorno e o registrador $ra
+    addi $sp, $sp, -12
+    sw $ra, 8($sp)
+    sw $t1, 4($sp)
+    sw $t0, 0($sp)
+
+    # Corpo da função
+    # Verificar se n é 0
+    bgt $t0, $zero, lower
+    addi $sp, $sp, 12
+    jr $ra
+
+lower:
+addi $t0, $t0, -1
+jal somaPG
+lw $ra, 8($sp)
+lw $t1, 4($sp)
+lw $t0, 0($sp)
+
+move $a0, $t0
+subi $t1, $t1, 1
+addi $sp, $sp, 12
+mult $t0, $t1
+mflo $a0
+add  $t0, $t0, $a0
+jr $ra
+
+return_1:
+    li $v0, 1    # Retornar 1 (caso n = 0)
+
+return_func:
+    # Epílogo: Restaurar o registrador $ra e retornar
+    lw $ra, 4($sp)
+    addi $sp, $sp, 8
+    jr $ra

@@ -1,5 +1,5 @@
 # Thomaz Lima, Pedro Silva, Sofia Saraiva, Andre Goes
-# Q7
+# Q7 - Termo PG
 # Infra de HW 2024.1
 # PG
 
@@ -57,7 +57,7 @@ somaPG:
 
     # Corpo da função
     # Verificar se n é 0
-    bgt $t0, $zero, lower
+    bgt $t0, $t2, lower
     addi $sp, $sp, 12
     jr $ra
 
@@ -69,10 +69,11 @@ lw $t1, 4($sp)
 lw $t0, 0($sp)
 
 move $a0, $t0
+subi $t1, $t1, 1
 addi $sp, $sp, 12
-mult $a0, $t1
+mult $t0, $t1
 mflo $a0
-add  $t0, $t0, $a0
+add  $t0, $zero, $a0
 jr $ra
 
 return_1:
